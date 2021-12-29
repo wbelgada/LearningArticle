@@ -14,7 +14,8 @@ def run_episode(agents,mat, train):
 
     if train :
         agents[0].update(0, r1, a1, 0)
-        agents[1].update(0, r2, a2, 0)
+        agents[1].setExperience(0,a2,r2,None, 0)
+        agents[1].update(0)
 
     return a1,a2
 
@@ -36,7 +37,7 @@ def train(num_episodes: int, evaluate_every: int, num_evaluation_episodes: int, 
         """
 
     returns = np.zeros(shape=((num_episodes//evaluate_every),num_evaluation_episodes,2))
-    agents = [PHCAgent(2, 1, 0.05,epsilon,decay,epsilon_min),WoLFPHCAgent(None,2,1,0.05,0.02,epsilon,decay,epsilon_min)]
+    agents = [PHCAgent(2, 1, 0.05,epsilon,decay,epsilon_min),WoLFPHCAgent(2,1,0.1,0.999,0.01,0.1,0.0)]
     mat = np.array([[1,-1],
                     [-1,1]])
     current_eval = 0
@@ -71,7 +72,7 @@ def train(num_episodes: int, evaluate_every: int, num_evaluation_episodes: int, 
 
 if __name__ == "__main__" :
 
-    num_episodes = 100000
+    num_episodes = 1000000
     evaluate_every = 1000
     num_evaluation_episodes = 100
     epsilon = 1
@@ -85,14 +86,12 @@ if __name__ == "__main__" :
 
 
     fig, ax = plt.subplots()
-    """
+
     labels = [str((i + 1)) for i in range(0, num_episodes, evaluate_every)]
     x_train_pos = np.arange(0, num_episodes, evaluate_every)
 
+
     plt.plot(x_train_pos, probs1, label="Training average")
-    """
-    labels = [str((i + 1)) for i in range(0, num_episodes, evaluate_every)]
-    x_train_pos = np.arange(0, num_episodes, evaluate_every)
 
     plt.plot(x_train_pos, probs2, label="Training average")
 
