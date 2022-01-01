@@ -71,8 +71,8 @@ def train(num_episodes: int, evaluate_every: int, num_evaluation_episodes: int, 
 
 if __name__ == "__main__" :
 
-    num_episodes = 100000
-    evaluate_every = 10000
+    num_episodes = 10000
+    evaluate_every = 1000
     num_evaluation_episodes = 100
     epsilon = 1
     decay = 0.999

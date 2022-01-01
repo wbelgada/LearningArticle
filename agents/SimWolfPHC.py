@@ -141,9 +141,9 @@ class WoLFPHCAgent():
             return tuple([args])
 
 
-    def update(self, s):
+    def update(self):
         self.learn()
-        self.avg_pi(s)
-        self.pi(s)
+        self.calculateAveragePolicyUpdate()
+        self.calculatePolicyUpdate()
 
         self._epsilon = max(self._epsilon*0.999,self._min_epsilon)
