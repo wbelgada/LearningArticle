@@ -43,6 +43,7 @@ def train(num_episodes: int, evaluate_every: int, epsilon: int,  decay: int, eps
     agents = [PHCAgent(n_actions, n_states, delta_win,epsilon,decay,epsilon_min),WoLFPHCAgent(n_actions,n_states,0.1,0.999,delta_win,delta_lose,0.1)]
     mat = np.array([[1,-1],
                     [-1,1]])
+    current_eval = 0
     probs1 = []
     probs2 = []
     for i in range(num_episodes):
@@ -50,6 +51,19 @@ def train(num_episodes: int, evaluate_every: int, epsilon: int,  decay: int, eps
 
         if ((i+1) % evaluate_every == 0) :
             print("Training for", i+1 , "/", num_episodes)
+            for episode in range(num_evaluation_episodes):
+                actions = run_episode(agents,mat,False)
+                returns[current_eval][episode] = actions
+            count1 = 0
+            count2 = 0
+            for elem in returns[current_eval]:
+                if elem[0] == 0 :
+                    count1 += 1
+                if elem[1] == 0:
+                    count2 += 1
+            current_eval += 1
+            print("Probability for this evaluation  is for agent 1 :", count1 /num_evaluation_episodes)
+            print("Probability for this evaluation  is for agent 2 :", count2 / num_evaluation_episodes)
 
             probs1.append(agents[0].H[0][0])
             probs2.append(agents[1]._pi[0][0])
@@ -61,8 +75,9 @@ def train(num_episodes: int, evaluate_every: int, epsilon: int,  decay: int, eps
 
 if __name__ == "__main__" :
 
-    num_episodes = 1000000
+    num_episodes = 100000
     evaluate_every = 10000
+    num_evaluation_episodes = 100
     epsilon = 1
     decay = 0.999
     epsilon_min = 0.00001
