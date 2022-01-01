@@ -46,3 +46,10 @@ class GridWorldEnv:
             currentAgent -=1
 
         return currentAgent
+
+    def reset(self, agent):
+        self.__init__()
+        if agent == 1:
+            return self.agent1
+        else:
+            return self.agent2
