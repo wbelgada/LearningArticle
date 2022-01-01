@@ -9,9 +9,9 @@ class PHCAgent:
         self.n_states = n_states
         self.Q = np.zeros(shape=(n_states, n_actions))
         self.H = (1 / n_actions) * np.ones(shape=(n_states, n_actions))
-        self.alpha = 0.9
+        self.alpha = 0.1
         self.delta = delta  # how much we update the policy  if we are winning
-        self.gamma = 0.9
+        self.gamma = 0.999
         self.epsilon = epsilon
         self.decay = decay
         self.epsilon_min = epsilon_min
