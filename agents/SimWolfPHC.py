@@ -99,6 +99,10 @@ class WoLFPHCAgent():
         for i, a in enumerate(self._n_actions):
             k = self._tuple(self._s1)
             self._avg_pi[k][i] = self.avg_pi(k)[i] + 1 / C * (self.pi(k)[i] - self.avg_pi(k)[i])
+            if self._avg_pi[k][i] >1:
+                self._avg_pi[k][i] = 1
+            elif self._avg_pi[k][i] < 0:
+                self._avg_pi[k][i] = 0
         return self.avg_pi(k)  # The avg policy in current state
 
     def calculatePolicyUpdate(self):
