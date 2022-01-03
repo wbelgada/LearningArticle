@@ -14,11 +14,12 @@ def run_episode(agents,mat, train):
 
     if train :
         agents[0].update(0, r1, a1, 0)
-        agents[1].update(0,a2,r2,0)
+        agents[1].setExperience(0,a2,r2,None, 0)
+        agents[1].update(0)
 
     return a1,a2
 
-def train(num_episodes: int, evaluate_every: int, epsilon: int,  decay: int, epsilon_min: int) :
+def train(num_episodes: int, evaluate_every: int, num_evaluation_episodes: int, epsilon: int,  decay: int, epsilon_min: int) :
     """
         Training loop.
         :param env: The gym environment.
@@ -34,13 +35,8 @@ def train(num_episodes: int, evaluate_every: int, epsilon: int,  decay: int, eps
                 each evaluation.
         """
 
-    delta_win = 0.01
-    delta_lose = 2*delta_win
-    n_actions = 2
-    n_states = 1
-
-
-    agents = [PHCAgent(n_actions, n_states, delta_win,epsilon,decay,epsilon_min),WoLFPHCAgent(n_actions,n_states,0.1,0.999,delta_win,delta_lose,0.1)]
+    returns = np.zeros(shape=((num_episodes//evaluate_every),num_evaluation_episodes,2))
+    agents = [PHCAgent(2, 1, 0.05,epsilon,decay,epsilon_min),WoLFPHCAgent(2,1,0.1,0.999,0.01,0.1,0.0)]
     mat = np.array([[1,-1],
                     [-1,1]])
     current_eval = 0
@@ -51,38 +47,28 @@ def train(num_episodes: int, evaluate_every: int, epsilon: int,  decay: int, eps
 
         if ((i+1) % evaluate_every == 0) :
             print("Training for", i+1 , "/", num_episodes)
-            for episode in range(num_evaluation_episodes):
-                actions = run_episode(agents,mat,False)
-                returns[current_eval][episode] = actions
-            count1 = 0
-            count2 = 0
-            for elem in returns[current_eval]:
-                if elem[0] == 0 :
-                    count1 += 1
-                if elem[1] == 0:
-                    count2 += 1
-            current_eval += 1
-            print("Probability for this evaluation  is for agent 1 :", count1 /num_evaluation_episodes)
-            print("Probability for this evaluation  is for agent 2 :", count2 / num_evaluation_episodes)
+
+            print("Probability for this evaluation  is for agent 1 :", agents[0].H[0][0])
+            print("Probability for this evaluation  is for agent 2 :", agents[1]._pi[(0,)][0])
 
             probs1.append(agents[0].H[0][0])
-            probs2.append(agents[1]._pi[0][0])
+            probs2.append( agents[1]._pi[(0,)][0])
 
-    return agents,probs1,probs2
+    return agents,returns,probs1,probs2
 
 
 
 
 if __name__ == "__main__" :
 
-    num_episodes = 100000
+    num_episodes = 1000000
     evaluate_every = 10000
     num_evaluation_episodes = 100
     epsilon = 1
     decay = 0.999
     epsilon_min = 0.00001
 
-    agents,probs1,probs2 = train(num_episodes,evaluate_every,epsilon,decay,epsilon_min)
+    agents,returns,probs1,probs2 = train(num_episodes,evaluate_every,num_evaluation_episodes,epsilon,decay,epsilon_min)
 
     print(probs1)
     print(probs2)
@@ -94,9 +80,8 @@ if __name__ == "__main__" :
     x_train_pos = np.arange(0, num_episodes, evaluate_every)
 
 
-    #plt.plot(x_train_pos, probs1, label="PHC")
+    plt.plot(x_train_pos, probs1, label="Training average")
 
-    plt.plot(x_train_pos, probs2, label="WoLF-PHC")
-    plt.legend()
+    plt.plot(x_train_pos, probs2, label="Training average")
 
     plt.show()

@@ -16,12 +16,12 @@ class GridWorldEnv:
 
         if new1 != new2:
             reward1 = self.rew(1, new1)
-            if reward1 is None:
-                print("old : " ,self.agent1, " new : ", new1)
-                reward1 = 0
             reward2 = self.rew(2, new2)
+            if reward1 is None:
+                #print("old : ", self.agent1, " new : ", new1)
+                reward1 = 0
             if reward2 is None:
-                print("old : ", self.agent2, " new : ", new2)
+                #print("old : ", self.agent2, " new : ", new2)
                 reward2 = 0
             if 0 <= new1 <= 8 and reward1 != -1:
                 self.agent1 = new1
@@ -95,5 +95,7 @@ class GridWorldEnv:
 
         if old == 6 or old == 8:
             if new == 6 or new == 8:
-                return 0.15
+                return 0
+        if old == new:
+            return -0.2
 
